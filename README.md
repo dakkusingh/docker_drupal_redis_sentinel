@@ -1,19 +1,27 @@
 # Docker Drupal Redis Sentinel
+At the very least, installing and running “redis” seem to be enough to run Drupal with it - but sometimes you want to scale Redis for HA. 
 
-## What do I get?
-Following services are created:
+Tool named “redis-sentinel” provides “redis” services such as: 
+* *Monitoring*: It can check master or slave services whether is working correctly and healthy or not.
+* *Notification*: It can notify when a service goes down.
+* *Automatic Failover*: It starts a failover scenario and assigns one of slaves as a master when master service goes down.
+* *Configuration Provider*: It can configure and share master service information when a new service is added to cluster.
 
-* master: Master Redis Server
-* slave: Slave Redis Server
-* sentinel: Sentinel Server
+
+## What do I get with this Repo?
+Following services are created using Docker:
+
+* Redis master: Master Redis Server
+* Redis slave: Slave Redis Server
+* Redis sentinel: Sentinel Server
 * Nginx: For Drupal
 * PHP: PHP FPM for Drupal
 * MySQL: For Drupal DB
 
-## Setup this locally
+## Setup Drupal + Redis + Sentinels locally
 ### Get this repo
 ```
-git clone 
+git clone {this_repo}
 ```
 
 ### Get Drupal
@@ -25,7 +33,7 @@ composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-inter
 #### Drupal Config
 See README-DRUPAL.md
 
-## Run all this locally.
+## Run all services locally
 ### Get it up
 ```
 docker-compose up --build -d
@@ -34,7 +42,7 @@ docker-compose up --build -d
 ....
 ```
 
-### Scale up
+### Scale up Redis slaves & Sentinels
 ```
 docker-compose slave=2 sentinel=3
 ....
