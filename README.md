@@ -1,5 +1,5 @@
 # Docker Drupal Redis Sentinel
-At the very least, installing and running “redis” seem to be enough to run Drupal with it - but sometimes you want to scale Redis for HA. 
+Installing and running “redis” seem to be enough to run Drupal with it - but sometimes you want to scale Redis for HA. 
 
 Tool named “redis-sentinel” provides “redis” services such as: 
 * *Monitoring*: It can check master or slave services whether is working correctly and healthy or not.
@@ -69,3 +69,6 @@ docker_redis_sentinel_slave_1      docker-entrypoint.sh redis ...   Up      6379
 docker_redis_sentinel_slave_2      docker-entrypoint.sh redis ...   Up      6379/tcp
 docker_redis_sentinel_web_1        nginx -g daemon off;             Up      0.0.0.0:80->80/tcp
 ```
+
+## References:
+https://medium.com/@mustafa.ileri/redis-clustering-with-redis-sentinel-on-docker-1090ab876f97
