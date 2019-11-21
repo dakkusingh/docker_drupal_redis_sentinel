@@ -7,6 +7,8 @@ Tool named “redis-sentinel” provides “redis” services such as:
 * *Automatic Failover*: It starts a failover scenario and assigns one of slaves as a master when master service goes down.
 * *Configuration Provider*: It can configure and share master service information when a new service is added to cluster.
 
+![Redis Sentinel Drupal Docker](https://miro.medium.com/max/1069/1*gszoEBW0lupbMDDGGgYOPA.png)
+
 
 ## What do I get with this Repo?
 Following services are created using Docker:
@@ -70,5 +72,6 @@ docker_redis_sentinel_slave_2      docker-entrypoint.sh redis ...   Up      6379
 docker_redis_sentinel_web_1        nginx -g daemon off;             Up      0.0.0.0:80->80/tcp
 ```
 
-## References:
+### References:
 https://medium.com/@mustafa.ileri/redis-clustering-with-redis-sentinel-on-docker-1090ab876f97
+https://medium.com/@amila922/redis-sentinel-high-availability-everything-you-need-to-know-from-dev-to-prod-complete-guide-deb198e70ea6
