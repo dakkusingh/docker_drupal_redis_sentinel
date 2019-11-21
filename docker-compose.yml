@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  # Redis Master
+  master:
+    image: redis:5-alpine
+  # Redis Slave
+  slave:
+    image: redis:5-alpine
+    command: redis-server --slaveof redis-master 6379
+    links:
+      - master:redis-master
+  # Redis Sentinels
+  sentinel:
+    build: sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=5000
+      - SENTINEL_PORT=26000
+      - SENTINEL_PAR_SYNC=1
+    # volumes:
+    #   - ./sentinel/sentinel.conf:/etc/redis/sentinel.conf
+    links:
+      - master:redis-master
+      - slave
