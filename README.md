@@ -1,14 +1,22 @@
-# Docker Redis Sentinel
+# Docker Drupal Redis Sentinel
 
-## What do I get?
+## This repo
+### Get it
+```
+git clone 
+```
+
+### What do I get?
 Following services are created:
 
 * master: Master Redis Server
 * slave: Slave Redis Server
 * sentinel: Sentinel Server
 
-## Sentinel Conf
-The sentinels are configured with *mymaster* instance and following properties (see ./sentinel/Dockerfile):
+## Setup Redis Sentinel in Docker
+### Sentinel Conf
+The sentinels are configured with *mymaster* instance and following properties 
+see ./docker-config/sentinel/Dockerfile
 
 ```
 ENV SENTINEL_QUORUM 2
@@ -18,12 +26,7 @@ ENV SENTINEL_PORT 26000
 ENV SENTINEL_PAR_SYNC 1
 ```
 
-## Get it
-```
-git clone 
-```
-
-## Get it up
+### Get it up
 ```
 docker-compose up --build -d
 
@@ -64,7 +67,7 @@ Creating docker_redis_sentinel_slave_1  ... done
 Creating docker_redis_sentinel_sentinel_1 ... done
 ```
 
-## Scale up
+### Scale up
 ```
 docker-compose slave=2 sentinel=3
 ...
@@ -77,7 +80,7 @@ Creating docker_redis_sentinel_sentinel_2 ... done
 Creating docker_redis_sentinel_sentinel_3 ... done
 ```
 
-## Is it up?
+### Is it up?
 ```
 docker-compose ps
 
@@ -88,14 +91,14 @@ docker_redis_sentinel_sentinel_1   entrypoint.sh                    Up      6379
 docker_redis_sentinel_slave_1      docker-entrypoint.sh redis ...   Up      6379/tcp
 ```
 
-## Check Sentinel Config
+### Check Sentinel Config
 ```
 docker exec -it docker_redis_sentinel_sentinel_1 /bin/sh
 
 cat /etc/redis/sentinel.conf
 ```
 
-## Check
+### Check
 ```
 docker-compose ps
               Name                            Command               State    Ports
@@ -108,7 +111,7 @@ docker_redis_sentinel_slave_1      docker-entrypoint.sh redis ...   Up      6379
 docker_redis_sentinel_slave_2      docker-entrypoint.sh redis ...   Up      6379/tcp
 ```
 
-## Check Sentinel Info
+### Check Sentinel Info
 ```
 docker-compose exec sentinel redis-cli -p 26000 SENTINEL get-master-addr-by-name mymaster
 
@@ -116,7 +119,7 @@ docker-compose exec sentinel redis-cli -p 26000 SENTINEL get-master-addr-by-name
 2) "6379"
 ```
 
-## Test Failover
+### Test Failover
 ```
 docker-compose pause master
 
@@ -143,3 +146,44 @@ docker-compose exec sentinel redis-cli -p 26000 sentinel masters
 ```
 docker-compose exec sentinel redis-cli -p 26000 sentinel failover <your cluster id>
 ```
+
+## Drupal Redis Setup
+How to configure Drupal for Redis.
+
+### Install Pecl Redis
+```
+pecl install redis
+```
+See: https://github.com/phpredis/phpredis/blob/develop/INSTALL.markdown
+
+### Download Drupal Redis Module
+```
+composer require 'drupal/redis:^1.2'
+```
+See: https://www.drupal.org/project/redis/releases
+
+### Enable Redis module
+```
+drush en redis
+```
+
+### Configure Redis Module for Drupal
+```
+## REDIS ##
+$settings['redis.connection']['interface'] = 'PhpRedis';
+
+// Sentinels instances list with hostname:port format.
+$settings['redis.connection']['host'] = ['sentinel:26000'];
+
+// Redis instance name.
+$settings['redis.connection']['instance']  = 'mymaster';
+
+// Set the redis backend.
+$settings['cache']['default'] = 'cache.backend.redis';
+
+// Connect via UNIX socket
+$conf['redis_cache_socket'] = '/tmp/redis.sock';
+```
+
+See: https://git.drupalcode.org/project/redis/blob/8.x-1.x/README.md
+See: https://git.drupalcode.org/project/redis/blob/8.x-1.x/README.PhpRedis.txt
