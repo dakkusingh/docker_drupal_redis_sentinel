@@ -4,23 +4,67 @@ services:
   # Redis Master
   master:
     image: redis:5-alpine
+  
   # Redis Slave
   slave:
     image: redis:5-alpine
     command: redis-server --slaveof redis-master 6379
     links:
       - master:redis-master
+  
   # Redis Sentinels
   sentinel:
-    build: sentinel
+    build: docker-config/sentinel
     environment:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=5000
       - SENTINEL_PORT=26000
       - SENTINEL_PAR_SYNC=1
-    # volumes:
-    #   - ./sentinel/sentinel.conf:/etc/redis/sentinel.conf
     links:
       - master:redis-master
       - slave
+  
+  # Nginx
+  web:
+    image: dakku/drupal-docker-nginx:v1.0
+    ports:
+      - "80:80"
+    volumes:
+      - ./drupal:/var/www/html
+      - ./docker-config/nginx/drupal8.conf:/etc/nginx/conf.d/default.conf
+    environment:
+      APP_ROOT: /var/www/html
+    links:
+      - php
+    depends_on:
+      - php
+
+  # PHP FPM
+  php:
+    build: docker-config/php
+    environment:
+      APP_ROOT: /var/www/html
+    #   DOCROOT_SUBDIR: web
+    #   DRUPAL_SITE: default
+    #   DRUPAL_HASH_SALT: drupal-bad-hash-salt
+    #   CONF_DIR: /var/www/conf
+    #   FILES_DIR: /mnt/files
+    volumes:
+      - ./drupal:/var/www/html
+    links:
+      - db
+    depends_on:
+      - db
+
+  # MariaDB MySQL Server
+  db:
+    image: mariadb:10.2
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+      MYSQL_DATABASE: drupal
+    ports:
+      - "3306:3306"
+    user: mysql
