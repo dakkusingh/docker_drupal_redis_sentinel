@@ -32,7 +32,10 @@ docker-compose exec sentinel redis-cli -p 26000 SENTINEL get-master-addr-by-name
 docker-compose pause master
 
 Pausing docker_redis_sentinel_master_1 ... done
+```
 
+Check info again to confirm failover.
+```
 docker-compose exec sentinel redis-cli -p 26000 SENTINEL get-master-addr-by-name mymaster
 
 1) "172.17.0.3"
@@ -53,4 +56,13 @@ docker-compose exec sentinel redis-cli -p 26000 sentinel masters
 ### Force failover
 ```
 docker-compose exec sentinel redis-cli -p 26000 sentinel failover <your cluster id>
+```
+
+### Check Cache Keys
+```
+docker exec -it docker_redis_sentinel_master_1 redis-cli KEYS '*'
+
+or
+
+docker-compose exec master redis-cli KEYS '*'
 ```

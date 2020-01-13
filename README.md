@@ -29,9 +29,11 @@ git clone {this_repo}
 ### Get Drupal
 #### Composer install Drupal
 Composer install Drupal into subdir called `drupal`.
+
 ```
 composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-interaction
 ```
+
 #### Drupal Config
 See README-DRUPAL.md
 
