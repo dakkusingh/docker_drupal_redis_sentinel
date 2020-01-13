@@ -42,6 +42,16 @@ docker-compose exec sentinel redis-cli -p 26000 SENTINEL get-master-addr-by-name
 2) "6379"
 ```
 
+### List all running services
+```
+docker-compose ps --services
+```
+
+### View sentinel logs
+```
+docker-compose logs sentinel
+```
+
 ## Redis Sentinel Cheat Sheet
 ### Get full info 
 ```
@@ -65,4 +75,18 @@ docker exec -it docker_redis_sentinel_master_1 redis-cli KEYS '*'
 or
 
 docker-compose exec master redis-cli KEYS '*'
+
+or 
+
+docker-compose exec master redis-cli KEYS 'mysite:config*'
 ```
+
+### Purge ALL
+```
+flushall
+```
+
+
+### References
+See:
+https://pantheon.io/docs/redis#use-the-redis-command-line-client
